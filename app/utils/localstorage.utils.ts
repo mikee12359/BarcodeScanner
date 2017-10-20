@@ -1,10 +1,12 @@
 import { SecureStorage } from "nativescript-secure-storage";
-let SecureStorageService = new SecureStorage();
+var SecureStorageService = new SecureStorage();
 
-export function setLocalStorage(key: string, value: string): void {
-    SecureStorageService.setSync({
-        key: key,
-        value: value
+export function setLocalStorage(key: string, value: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+        SecureStorageService.set({
+            key: key,
+            value: value
+        }).then(resolve);
     });
 }
 
@@ -14,6 +16,10 @@ export function getLocalStorage(key: string): string {
     });
 }
 
-export function clearLocalStorage(): boolean {
-    return SecureStorageService.removeAllSync();
+export function clearLocalStorage(key: string): void {
+    SecureStorageService.remove({
+        key: key
+    }).then(response => {
+        console.log("Remove successfully");
+    })
 }

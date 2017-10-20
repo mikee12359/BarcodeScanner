@@ -21,7 +21,8 @@ export class BarcodeScannerPageComponent implements OnInit {
     }
 
     public onScan() {
-        
+        var _self = this;
+
         this.barcodeScanner.scan({
             formats: "QR_CODE, EAN_13",
             beepOnScan: true,
@@ -30,54 +31,55 @@ export class BarcodeScannerPageComponent implements OnInit {
             openSettingsIfPermissionWasPreviouslyDenied: true //ios only 
         }).then((result) => {
             let value = JSON.parse(result.text);
-            //put algo here
-            // console.dir(this.myItems)
-            for(var array = 0;array <= this.myItems.length; array++){
-                if(value == this.myItems[array]){
-                    this.showModalCheckOut(value);
-                } else { this.showModalCheckIn(value); }
+            let itemFound = _self.myItems.find(item => item.id === value.id);
+            if (itemFound) {
+                _self.showModal(value, ModalCheckOutComponent, _self.checkOut);
+            } else {
+                _self.showModal(value, ModalCheckInComponent, _self.checkIn);
             }
+            //put algo here
             
         }, (errorMessage) => {
             console.log("Error when scanning " + errorMessage);
         }
             );
-            
-            
+    }
+
+    checkIn(value: any) {
+        this.myItems.push(value);
+        this.storeValue(value);
+    }
+
+    checkOut(value: any) {
+        this.myItems.filter(item => {
+            if (item.id == value.id) {
+                return item;
+            }
+        });
+        this.removeValue(value.id);
     }
     
     ngOnInit() {
-        // setLocalStorage("items", "");
+        // clearLocalStorage("items");
         let fetchItems = (JSON.parse(getLocalStorage("items")) || []);
         console.dir(fetchItems);
         this.myItems = fetchItems;
     }
 
-    showModalCheckIn(value: any) {
+    showModal(value: any, modalComponent: any, fn: Function) {
+        var _self = this;
+
         let options = {
             context: value,
             fullscreen: false,
             viewContainerRef: this._vcRef
         }
 
-        this._modalService.showModal(ModalCheckInComponent, options).then(itemCheckIn => {
-            if (itemCheckIn) {
-                this.myItems.push(value);
-                this.storeValue(value);
+        this._modalService.showModal(modalComponent, options).then(status => {
+            if (status) {
+                fn.call(_self, value);
             }
         });
-    }
-    showModalCheckOut(value: any) {
-        let options = {
-            context: value,
-            fullscreen: false,
-            viewContainerRef: this._vcRef
-        }
-        this._modalService.showModal(ModalCheckOutComponent, options).then(itemCheckOut => {
-            if (itemCheckOut) {
-                this.myItems.pop(value);
-            }
-        })
     }
 
     storeValue(value: any) {
@@ -85,7 +87,19 @@ export class BarcodeScannerPageComponent implements OnInit {
         items.push(value);
         setLocalStorage("items", JSON.stringify(items));
     }
+
+    removeValue(valueId: string) {
+        let items = (JSON.parse(getLocalStorage("items")) || []);
+        items.filter(item => {
+            if (item.id == valueId) {
+                return item;
+            }
+        })
+        setLocalStorage("items", JSON.stringify(items));
+        console.log(items);
+    }
+
     checkoutValue(value: any) {
-        let 
+        
     }
 }

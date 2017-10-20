@@ -1,7 +1,7 @@
 <StackLayout>
     <Label text="CHECK IN" textAlignment="center" fontSize="24%" margin="1% 0 2% 0" textWrap="true"></Label>
     <Label [text]="context.id" textAlignment="center" margin="1% 0 2% 0" textWrap="true"></Label>
-    <Label [text]="context.name" textAlignment="center" margin="1% 0 2% 0" textWrap="true"></Label>
+    <Label [text]="context.description" textAlignment="center" margin="1% 0 2% 0" textWrap="true"></Label>
     <Label [text]="context.classification" textAlignment="center" margin="1% 0 2% 0" textWrap="true"></Label>
     
     <Button text="Check-in" class="btn btn-primary" (tap)="checkIn()"></Button>
