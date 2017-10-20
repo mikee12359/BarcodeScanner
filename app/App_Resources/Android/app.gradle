@@ -8,7 +8,7 @@
 android {  
   defaultConfig {  
     generatedDensities = []
-    applicationId = "org.nativescript.BarcodeScannerDemo09242017"  
+    applicationId = "com.xerkit.qrscanner"  
   }  
   aaptOptions {  
     additionalParameters "--no-version-vectors"  
